@@ -105,14 +105,32 @@ public class SajuService {
                 EARTHLY_BRANCHES_HANJA.get(yearBranchStr));
 
             // 월주 계산 - 완전히 수정
-            int monthBaseIndex = ((yearStem % 5) * 2) % 10;
-            int monthStem = (monthBaseIndex + month - 1) % 10;
+            int monthStem;
+            switch (yearStem) {
+                case 0: case 5: // 갑, 기
+                    monthStem = (month + 1) % 10; // 병부터 시작
+                    break;
+                case 1: case 6: // 을, 경
+                    monthStem = (month + 3) % 10; // 무부터 시작
+                    break;
+                case 2: case 7: // 병, 신
+                    monthStem = (month + 5) % 10; // 경부터 시작
+                    break;
+                case 3: case 8: // 정, 임
+                    monthStem = (month + 7) % 10; // 임부터 시작
+                    break;
+                case 4: case 9: // 무, 계
+                    monthStem = (month + 9) % 10; // 갑부터 시작
+                    break;
+                default:
+                    monthStem = 0;
+            }
             if (monthStem < 0) monthStem += 10;
             
-            // 월지 계산 간소화
-            int monthBranch = (month + 1) % 12;
+            // 월지 계산 - 간소화
+            int monthBranch = (month + 1) % 12; // 1월은 인(寅)월(2)
             if (monthBranch == 0) monthBranch = 12;
-            monthBranch = (monthBranch - 1) % 12;
+            monthBranch = (monthBranch + 1) % 12; // 인(寅)월은 인덱스 2
             
             String monthStemStr = HEAVENLY_STEMS[monthStem];
             String monthBranchStr = EARTHLY_BRANCHES[monthBranch];
@@ -129,11 +147,17 @@ public class SajuService {
                 HEAVENLY_STEMS_HANJA.get(monthStemStr), 
                 EARTHLY_BRANCHES_HANJA.get(monthBranchStr));
 
-            // 일주 계산
-            LocalDate baseDate = LocalDate.of(1900, 1, 1); // 1900년 1월 1일은 양력으로 경자일
+            // 일주 계산 - 정확한 기준일 사용
+            // 1900년 1월 31일은 양력으로 경진일(庚辰日)로 알려져 있음
+            LocalDate baseDate = LocalDate.of(1900, 1, 31);
+            int baseStem = 6; // 경(庚)
+            int baseBranch = 4; // 진(辰)
+
             int daysCycle = (int) ChronoUnit.DAYS.between(baseDate, request.getBirthDate());
-            int dayStem = (daysCycle + 6) % 10;  // 경일(6)부터 시작
-            int dayBranch = (daysCycle + 0) % 12;  // 자일(0)부터 시작
+            int dayStem = (daysCycle + baseStem) % 10;
+            if (dayStem < 0) dayStem += 10;
+            int dayBranch = (daysCycle + baseBranch) % 12;
+            if (dayBranch < 0) dayBranch += 12;
             
             String dayStemStr = HEAVENLY_STEMS[dayStem];
             String dayBranchStr = EARTHLY_BRANCHES[dayBranch];

@@ -5,68 +5,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사주팔자 - 운명을 읽다</title>
+    <title>사주팔자 데모</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        .container { 
-            max-width: 600px; 
-            margin-top: 50px; 
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #f8f9fc;
+            --accent-color: #e74a3b;
+            --text-color: #5a5c69;
+            --border-color: #e3e6f0;
+            --success-color: #1cc88a;
         }
-        .form-group { margin-bottom: 1rem; }
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fc;
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .container { 
+            max-width: 700px; 
+            margin-top: 50px; 
+            margin-bottom: 50px;
+        }
+        
+        h2, h4, h5 {
+            font-family: 'Noto Serif KR', serif;
+            color: #2e3951;
+        }
+        
+        .form-group { 
+            margin-bottom: 1.5rem; 
+        }
+        
+        .form-control, .btn {
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            padding: 0.7rem 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5ccc;
+            border-color: #3a5ccc;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 115, 223, 0.3);
+        }
+        
         .result-box {
             margin-top: 2rem;
             padding: 1rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            border: none;
+            border-radius: 15px;
             display: none;
+            background-color: white;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
         }
+        
         .fortune-table {
             margin-top: 20px;
             padding: 15px;
             background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
         }
+        
         .fortune-char {
             font-family: "SimSun", "NSimSun", serif;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
         }
+        
+        .fortune-char:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
         .saju-table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
         }
+        
         .saju-table th, .saju-table td {
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
             padding: 8px;
             text-align: center;
         }
+        
         .saju-table th {
-            background-color: #f8f9fa;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+            padding: 12px 8px;
         }
+        
         .hanja {
             font-family: "SimSun", "NSimSun", serif;
-            font-size: 1.2em;
+            font-size: 1.4em;
+            line-height: 1.5;
+            display: block;
+            margin-top: 5px;
+            color: #2c3e50;
+        }
+        
+        .saju-table td {
+            height: 80px;
+            vertical-align: middle;
+            padding: 10px 8px;
+            transition: all 0.3s;
+        }
+        
+        .saju-table tr:nth-child(even) {
+            background-color: rgba(78, 115, 223, 0.05);
+        }
+        
+        .saju-table td:first-child {
+            background-color: rgba(78, 115, 223, 0.1);
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background-color: rgba(28, 200, 138, 0.1);
+            border-color: rgba(28, 200, 138, 0.2);
+            color: var(--success-color);
+            border-radius: 10px;
+        }
+        
+        .alert-warning {
+            background-color: rgba(246, 194, 62, 0.1);
+            border-color: rgba(246, 194, 62, 0.2);
+            color: #f6c23e;
+            border-radius: 10px;
+        }
+        
+        /* 애니메이션 효과 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        #resultBox {
+            animation: fadeIn 0.5s ease-out;
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
     <div class="container">
-        <h2 class="text-center mb-4">사주팔자 확인하기</h2>
-        <form id="saJuForm" class="bg-white p-4 rounded shadow">
+        <h2 class="text-center mb-4"><i class="bi bi-stars"></i> 사주팔자 확인하기</h2>
+        <form id="saJuForm" class="bg-white p-5 rounded-3 shadow">
             <div class="form-group">
-                <label for="name">이름</label>
+                <label for="name" class="form-label"><i class="bi bi-person"></i> 이름</label>
                 <input type="text" class="form-control" id="name" name="name" required>
             </div>
             <div class="form-group">
-                <label for="birthDate">생년월일</label>
+                <label for="birthDate" class="form-label"><i class="bi bi-calendar-event"></i> 생년월일</label>
                 <input type="date" class="form-control" id="birthDate" name="birthDate" required>
             </div>
             <div class="form-group">
-                <label for="birthTime">태어난 시간</label>
+                <label for="birthTime" class="form-label"><i class="bi bi-clock"></i> 태어난 시간</label>
                 <input type="time" class="form-control" id="birthTime" name="birthTime" required>
             </div>
             <div class="form-group">
-                <label>성별</label>
+                <label class="form-label"><i class="bi bi-gender-ambiguous"></i> 성별</label>
                 <div class="form-check">
                     <input type="radio" class="form-check-input" id="male" name="gender" value="M" required>
                     <label class="form-check-label" for="male">남성</label>
@@ -77,7 +206,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>양력/음력</label>
+                <label class="form-label"><i class="bi bi-moon-stars"></i> 양력/음력</label>
                 <div class="form-check">
                     <input type="radio" class="form-check-input" id="solar" name="solarLunar" value="양력" checked>
                     <label class="form-check-label" for="solar">양력</label>
@@ -88,7 +217,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>윤달 여부</label>
+                <label class="form-label"><i class="bi bi-calendar-plus"></i> 윤달 여부</label>
                 <div class="form-check">
                     <input type="radio" class="form-check-input" id="regular" name="intercalation" value="평달" checked>
                     <label class="form-check-label" for="regular">평달</label>
@@ -98,11 +227,11 @@
                     <label class="form-check-label" for="leap">윤달</label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary w-100">사주팔자 보기</button>
+            <button type="submit" class="btn btn-primary w-100 mt-3"><i class="bi bi-search"></i> 사주팔자 보기</button>
         </form>
         
         <div id="resultBox" class="result-box">
-            <h4 class="text-center mb-3">사주팔자 결과</h4>
+            <h4 class="text-center mb-4"><i class="bi bi-stars"></i> 사주팔자 결과</h4>
             <div id="sajuResult"></div>
         </div>
     </div>
@@ -149,11 +278,20 @@
                             }
                         }
                         
+                        // 입력한 날짜 정보 파싱
+                        let inputDate = new Date(birthDate);
+                        let inputMonth = inputDate.getMonth() + 1; // getMonth()는 0부터 시작하므로 +1
+                        let inputDay = inputDate.getDate();
+                        let inputTime = birthTime.split(':')[0] + birthTime.split(':')[1];
+                        
                         // 응답 객체 디버깅
                         console.log('이름:', response.name);
                         console.log('년도:', response.year);
                         console.log('년간:', response.yearStem);
                         console.log('년지:', response.yearBranch);
+                        console.log('월:', response.month);
+                        console.log('일:', response.day);
+                        console.log('시:', response.time);
                         
                         // 안전하게 속성 접근하는 함수
                         function safeGet(obj, prop, defaultValue) {
@@ -185,10 +323,10 @@
                             '</tr>' +
                             '<tr>' +
                                 '<td></td>' +
-                                '<td>시(0000)</td>' +
-                                '<td>일(26)</td>' +
-                                '<td>월(02)</td>' +
-                                '<td>년(' + safeGet(response, 'year', '1900') + ')</td>' +
+                                '<td>시(' + safeGet(response, 'time', inputTime) + ')</td>' +
+                                '<td>일(' + safeGet(response, 'day', inputDay) + ')</td>' +
+                                '<td>월(' + safeGet(response, 'month', inputMonth) + ')</td>' +
+                                '<td>년(' + safeGet(response, 'year', inputDate.getFullYear()) + ')</td>' +
                             '</tr>' +
                         '</table>';
                         
@@ -226,7 +364,7 @@
                                     branchChar = response.majorFortuneBranchChars[i];
                                 }
                                 
-                                fortuneTable += '<div class="fortune-char text-center" style="width: 60px; height: 60px; font-size: 24px; border: 1px solid #ddd; padding: 5px; background-color: #f8f9fa">' + 
+                                fortuneTable += '<div class="fortune-char text-center" style="width: 60px; height: 80px; font-size: 22px; border: 1px solid #ddd; padding: 8px 5px; background-color: #f8f9fa">' + 
                                        stemChar + '<br>' + branchChar + '</div>';
                             }
                             fortuneTable += '</div>';
@@ -259,10 +397,10 @@
                         
                         // 결과 표시
                         let html = '<div class="saju-result">' +
-                            '<p class="mb-3 text-center"><strong>' + safeGet(response, 'name') + '</strong>님의 사주팔자</p>' +
-                            '<div class="alert alert-success">결과가 데이터베이스에 저장되었습니다.</div>' +
+                            '<p class="mb-4 text-center fs-5"><strong>' + safeGet(response, 'name') + '</strong>님의 사주팔자</p>' +
+                            '<div class="alert alert-success p-3"><i class="bi bi-check-circle-fill me-2"></i>결과가 데이터베이스에 저장되었습니다.</div>' +
                             sajuTable +
-                            '<div class="mt-4">' + fortuneTable + '</div>' +
+                            '<div class="mt-5">' + fortuneTable + '</div>' +
                             '</div>';
                         
                         $('#sajuResult').html(html);
